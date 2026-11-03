@@ -1,0 +1,52 @@
+grafana:
+  adminPassword: "admin"
+  persistence:
+    enabled: true
+    storageClassName: "ebs-sc"
+    size: "5Gi"
+
+prometheus:
+  prometheusSpec:
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: "ebs-sc"
+          resources:
+            requests:
+              storage: "5Gi"
+
+alertmanager:
+  enabled: true
+  config:
+    global:
+      # PASTE YOUR INCOMING WEBHOOK URL DIRECTLY HERE
+      slack_api_url: "REDACTED_SLACK_WEBHOOK"
+    route:
+      group_by: ['alertname', 'cluster']
+      group_wait: 10s
+      group_interval: 1m
+      repeat_interval: 5m
+      receiver: 'slack-alerts'
+    receivers:
+    - name: 'slack-alerts'
+      slack_configs:
+      - channel: '#monitoring'
+        send_resolved: true
+        title: '[{{ .Status | uppercase }}] EKS Alert Manager Trigger'
+        text: "Alert: {{ .CommonAnnotations.summary }}\nDetails: {{ .CommonAnnotations.description }}\nSeverity: {{ .CommonLabels.severity }}"
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: "ebs-sc"
+          resources:
+            requests:
+              storage: "2Gi"
+
+prometheusOperator:
+  admissionWebhooks:
+    enabled: false
+    patch:
+      enabled: false
+  tlsProxy:
+    enabled: false
