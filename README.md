@@ -1,93 +1,82 @@
-# Stan's Robot Shop — Kubernetes Deployment & Observability on AWS EKS
+# Stan's Robot Shop — AWS EKS Deployment, Monitoring & Observability
 
 <p align="center">
-  <strong>A Cloud-Native Microservices Application with Monitoring, Logging, Distributed Tracing, SLOs and Incident Response</strong>
+  <strong>A Cloud-Native Microservices Deployment with Kubernetes, Prometheus, Grafana, Loki, Jaeger and SRE Practices</strong>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Kubernetes-EKS-326CE5?logo=kubernetes&logoColor=white" />
-  <img src="https://img.shields.io/badge/Helm-Deployed-0F1689?logo=helm" />
-  <img src="https://img.shields.io/badge/Prometheus-Monitoring-E6522C?logo=prometheus" />
-  <img src="https://img.shields.io/badge/Grafana-Dashboards-F46800?logo=grafana" />
-  <img src="https://img.shields.io/badge/Loki-Logging-F2CC0C?logo=grafana" />
-  <img src="https://img.shields.io/badge/Jaeger-Tracing-60D0E4?logo=jaeger" />
   <img src="https://img.shields.io/badge/AWS-EKS-FF9900?logo=amazonaws&logoColor=white" />
+  <img src="https://img.shields.io/badge/Kubernetes-Orchestration-326CE5?logo=kubernetes&logoColor=white" />
+  <img src="https://img.shields.io/badge/Helm-Deployment-0F1689?logo=helm&logoColor=white" />
+  <img src="https://img.shields.io/badge/Prometheus-Metrics-E6522C?logo=prometheus&logoColor=white" />
+  <img src="https://img.shields.io/badge/Grafana-Visualization-F46800?logo=grafana&logoColor=white" />
+  <img src="https://img.shields.io/badge/Loki-Logging-F2CC0C?logo=grafana&logoColor=black" />
+  <img src="https://img.shields.io/badge/Jaeger-Distributed%20Tracing-60D0E4?logo=jaeger&logoColor=black" />
 </p>
 
 ---
 
 ## Table of Contents
 
-- [Project Overview](#project-overview)
-- [Project Objectives](#project-objectives)
-- [Application Overview](#application-overview)
-- [Architecture](#architecture)
-- [Technology Stack](#technology-stack)
-- [Infrastructure and Deployment](#infrastructure-and-deployment)
-- [Prerequisites](#prerequisites)
-- [Deploying the Application](#deploying-the-application)
-- [Accessing the Application](#accessing-the-application)
-- [Monitoring and Observability](#monitoring-and-observability)
-  - [Prometheus](#1-prometheus--metrics)
-  - [Grafana](#2-grafana--visualization)
-  - [Fluent Bit and Loki](#3-fluent-bit--loki-logging)
-  - [OpenTelemetry and Jaeger](#4-opentelemetry--jaeger-tracing)
-- [Service Level Objectives and Error Budgets](#service-level-objectives-and-error-budgets)
-- [Alerting and Slack Integration](#alerting-and-slack-integration)
-- [Incident Management and Recovery](#incident-management-and-recovery)
-- [Runbook and Documentation](#runbook-and-documentation)
-- [Load Generation](#load-generation)
-- [Original Application Documentation](#original-application-documentation)
-- [Lessons Learned](#lessons-learned)
-- [Future Improvements](#future-improvements)
-- [Disclaimer](#disclaimer)
+1. [Project Overview](#1-project-overview)
+2. [Project Objectives](#2-project-objectives)
+3. [Application Overview](#3-application-overview)
+4. [Architecture](#4-architecture)
+5. [Technology Stack](#5-technology-stack)
+6. [Repository Structure](#6-repository-structure)
+7. [Infrastructure and Deployment](#7-infrastructure-and-deployment)
+8. [Application Access](#8-application-access)
+9. [Monitoring and Observability](#9-monitoring-and-observability)
+10. [Service Level Objectives and Error Budgets](#10-service-level-objectives-and-error-budgets)
+11. [Alerting and Slack Integration](#11-alerting-and-slack-integration)
+12. [Incident Management and Recovery](#12-incident-management-and-recovery)
+13. [Operational Documentation](#13-operational-documentation)
+14. [Original Robot Shop Features](#14-original-robot-shop-features)
+15. [Lessons Learned](#15-lessons-learned)
+16. [Future Improvements](#16-future-improvements)
+17. [Disclaimer](#17-disclaimer)
+18. [Acknowledgements](#18-acknowledgements)
 
 ---
 
-## Project Overview
+# 1. Project Overview
 
 Stan's Robot Shop is a sample microservices application designed to provide a practical environment for learning containerization, orchestration, and application monitoring.
 
-This project extends the original Robot Shop application into a cloud-native deployment on **Amazon Elastic Kubernetes Service (Amazon EKS)**.
+This project extends the original Robot Shop application into a cloud-native environment deployed on **Amazon Elastic Kubernetes Service (Amazon EKS)**.
 
-The objective is not simply to deploy an application, but to build and operate an observable microservices environment with monitoring, centralized logging, distributed tracing, service availability objectives, alerting, and incident response procedures.
+The goal is not simply to deploy an application, but to build and operate an observable microservices environment with:
 
-The application is deployed to Kubernetes using Helm, while a dedicated observability stack provides visibility into application health and operational performance.
-
-The project demonstrates practical DevOps and Site Reliability Engineering (SRE) concepts, including:
-
-- Container orchestration with Kubernetes.
-- Application deployment and management using Helm.
-- Metrics collection and visualization.
-- Centralized log aggregation and querying.
+- Kubernetes orchestration and Helm-based deployments.
+- Application and infrastructure monitoring.
+- Centralized log collection and analysis.
 - Distributed tracing across microservices.
 - Service Level Objectives (SLOs).
 - Error budget management.
-- Alerting and incident response.
-- Failure simulation, service recovery, and post-incident documentation.
+- Automated alerting and Slack notifications.
+- Failure injection and incident recovery.
+- Incident documentation and postmortem analysis.
 
-## Project Objectives
+The project demonstrates practical DevOps and Site Reliability Engineering (SRE) concepts through the deployment, monitoring, troubleshooting, and recovery of a distributed application.
 
-The project focuses on six primary objectives:
+# 2. Project Objectives
+
+The project addresses six primary objectives:
 
 | # | Objective | Implementation |
 |---|---|---|
-| 1 | Application deployment | Deploy Robot Shop and load generator to AWS EKS using Helm |
+| 1 | Application deployment | Deploy Robot Shop and load generator to AWS EKS |
 | 2 | Metrics monitoring | Prometheus and Grafana dashboards |
 | 3 | Centralized logging | Fluent Bit and Loki |
 | 4 | Distributed tracing | OpenTelemetry and Jaeger |
-| 5 | Reliability management | SLOs, error budgets, and Slack notifications |
-| 6 | Incident response | Failure injection, recovery, root cause analysis, and postmortems |
+| 5 | Reliability management | SLOs, error budgets and Slack alerts |
+| 6 | Incident response | Failure injection, mitigation, recovery and postmortems |
 
----
+# 3. Application Overview
 
-## Application Overview
+Stan's Robot Shop simulates an online robot store using independently deployed microservices.
 
-Stan's Robot Shop is a sample microservices application that simulates an online robot store.
-
-It consists of multiple independently deployed services communicating to deliver the application's functionality.
-
-The original application uses several technologies:
+The original application uses technologies including:
 
 - Node.js and Express
 - Java and Spring Boot
@@ -101,36 +90,38 @@ The original application uses several technologies:
 - Nginx
 - AngularJS
 
-The application is intended as a sandbox for learning microservices architecture and container orchestration. It is not a comprehensive reference implementation of production-grade application security or error handling.
+The application provides an environment for experimenting with microservices architecture, containerization, and orchestration.
 
 For additional background, see the original [Stan's Robot Shop blog post](https://www.instana.com/blog/stans-robot-shop-sample-microservice-application/).
 
----
+# 4. Architecture
 
-## Architecture
+The project runs on Amazon EKS and separates application workloads from observability components using Kubernetes namespaces.
 
-The environment is divided into two primary Kubernetes namespaces:
+| Namespace | Purpose |
+|---|---|
+| `robot-shop` | Robot Shop application services and load generator |
+| `monitoring` | Metrics, dashboards, logging, tracing and alerting |
 
-- `robot-shop` — application workloads.
-- `monitoring` — monitoring and observability components.
-
-### High-Level Architecture
+## High-Level Architecture
 
 ```mermaid
 flowchart TB
-    U[User / Browser]
+    USER[User / Browser]
     LB[AWS Load Balancer]
+
     subgraph EKS[Amazon EKS Cluster]
         subgraph APP[robot-shop namespace]
             WEB[Web Frontend]
             CART[Cart]
-            CATALOGUE[Catalogue]
+            CAT[Catalogue]
             PAYMENT[Payment]
             REDIS[Redis]
-            DB[Database]
-            WORKER[Worker Services]
+            DB[MongoDB / MySQL]
+            RABBIT[RabbitMQ]
             LOAD[Load Generator]
         end
+
         subgraph MON[monitoring namespace]
             PROM[Prometheus]
             GRAF[Grafana]
@@ -141,42 +132,44 @@ flowchart TB
             AM[Alertmanager]
         end
     end
-    SLACK[Slack Notifications]
-    U --> LB --> WEB
+
+    SLACK[Slack Monitoring Channel]
+
+    USER --> LB --> WEB
     WEB --> CART
-    WEB --> CATALOGUE
+    WEB --> CAT
     WEB --> PAYMENT
     CART --> REDIS
     PAYMENT --> DB
     LOAD --> WEB
+
     PROM --> GRAF
     FB --> LOKI
     OTEL --> JAEGER
     PROM --> AM --> SLACK
 ```
 
-### Observability Data Flow
+## Observability Data Flow
 
 | Component | Responsibility |
 |---|---|
 | Prometheus | Collects and stores metrics |
 | Grafana | Visualizes metrics through dashboards |
-| Fluent Bit | Collects container logs from Kubernetes nodes |
-| Loki | Stores and indexes logs for querying |
+| Fluent Bit | Collects Kubernetes container logs |
+| Loki | Stores and makes logs searchable |
 | OpenTelemetry Collector | Receives and forwards telemetry data |
 | Jaeger | Stores and visualizes distributed traces |
-| Alertmanager | Routes Prometheus alerts to notification channels |
+| Alertmanager | Routes Prometheus alerts |
 | Slack | Receives operational alert notifications |
 
----
-
-## Technology Stack
+# 5. Technology Stack
 
 | Category | Technology |
 |---|---|
 | Cloud Provider | Amazon Web Services |
 | Kubernetes Platform | Amazon EKS |
-| Container Runtime | Docker / containerd |
+| Container Runtime | containerd |
+| Containerization | Docker |
 | Package Management | Helm |
 | Application | Stan's Robot Shop |
 | Metrics Collection | Prometheus |
@@ -190,89 +183,57 @@ flowchart TB
 | Load Generation | Locust |
 | Operating System | Ubuntu 22.04 |
 
----
+# 6. Repository Structure
 
-## Infrastructure and Deployment
-
-The application runs on Amazon EKS in the `eu-north-1` AWS region.
-
-### Kubernetes Namespaces
-
-```bash
-kubectl get namespaces
-```
-
-The project uses:
+The repository contains the Kubernetes deployment configuration, monitoring configuration, operational documentation, and project evidence.
 
 ```text
-robot-shop
-monitoring
+devops_capstone2/
+│
+├── K8s/
+│   └── helm/
+│       └── robot-shop/
+│
+├── monitoring/
+│   ├── alert/
+│   │   └── monitoring-values.yaml
+│   └── ...
+│
+├── doc/
+│   ├── fullydeployed(1).png
+│   ├── redmetrics-dashboard(2).png
+│   ├── red-metrics-prometheus(1).png
+│   ├── loki-searc-by-service.png
+│   ├── jaegerotl-trace(2).png
+│   ├── service-breach-alert-to-slack(1).png
+│   ├── payment-alert-firing.png
+│   ├── payment-alert-resolved.png
+│   └── incidentdrill-web(2).png
+│
+├── RUNBOOK.md
+├── SLO_ERROR_BUDGET_POLICY.md
+├── postmortem.md
+└── README.md
 ```
 
-### Verify Application Workloads
+*The structure above highlights the principal project files and evidence. Other application and Helm chart files are omitted for readability.*
 
-```bash
-kubectl get pods -n robot-shop
-kubectl get services -n robot-shop
-kubectl get deployments -n robot-shop
-```
+# 7. Infrastructure and Deployment
 
-### Verify Monitoring Workloads
+The application is deployed to Amazon EKS in the `eu-north-1` AWS region.
 
-```bash
-kubectl get pods -n monitoring
-kubectl get services -n monitoring
-kubectl get deployments -n monitoring
-```
-
-### Helm Releases
-
-```bash
-helm list -A
-```
-
-Helm is used to install and manage the Robot Shop application and the monitoring stack.
-
-### Deployment Configuration
-
-The Robot Shop application is deployed using its Helm chart:
-
-```bash
-helm install robot-shop ./helm/robot-shop -n robot-shop --create-namespace
-```
-
-> Adjust the chart path and release name if your local chart directory differs.
-
-The monitoring stack is deployed using the `kube-prometheus-stack` Helm chart.
-
-The project uses the release name `prom-stack` in the `monitoring` namespace.
-
-To inspect releases:
-
-```bash
-helm list -A
-```
-
-To inspect deployment history:
-
-```bash
-helm history robot-shop -n robot-shop
-```
-
----
+Helm is used to install and manage the application and monitoring components.
 
 ## Prerequisites
 
-Before deploying the project, ensure the following tools are installed and configured:
+- AWS account with appropriate EKS permissions.
+- AWS CLI.
+- kubectl.
+- Helm.
+- Docker.
+- Configured access to an EKS cluster.
 
-- AWS CLI
-- kubectl
-- Helm
-- Docker
-- An AWS account with permissions to manage EKS resources
-- A configured Kubernetes context pointing to the EKS cluster
-
-Verify the installations:
+Verify the required tools:
 
 ```bash
 aws --version
@@ -281,7 +242,7 @@ helm version
 docker --version
 ```
 
-Configure access to an existing EKS cluster:
+Configure Kubernetes access:
 
 ```bash
 aws eks update-kubeconfig \
@@ -295,93 +256,94 @@ Verify cluster connectivity:
 kubectl get nodes
 ```
 
----
-
-## Deploying the Application
-
-### 1. Deploy Robot Shop
-
-Install the application using Helm:
+## Kubernetes Namespaces
 
 ```bash
-helm install robot-shop ./helm/robot-shop \
-  -n robot-shop --create-namespace
+kubectl get namespaces
 ```
 
-If the release already exists, inspect it before making changes:
+The project uses:
+
+- `robot-shop`
+- `monitoring`
+
+## Verify Application Workloads
+
+```bash
+kubectl get pods -n robot-shop
+kubectl get deployments -n robot-shop
+kubectl get services -n robot-shop
+kubectl get pvc -n robot-shop
+```
+
+## Verify Monitoring Workloads
+
+```bash
+kubectl get pods -n monitoring
+kubectl get services -n monitoring
+kubectl get deployments -n monitoring
+```
+
+## Helm Releases
+
+```bash
+helm list -A
+```
+
+Inspect the Robot Shop release:
 
 ```bash
 helm status robot-shop -n robot-shop
 ```
 
-### 2. Deploy the Load Generator
-
-The load generator is provided separately and can be deployed to Kubernetes to generate application traffic.
-
-Verify its deployment:
+Inspect its deployment history:
 
 ```bash
-kubectl get pods -n robot-shop
+helm history robot-shop -n robot-shop
 ```
 
-### 3. Verify Application Health
+## Deployment Evidence
 
-```bash
-kubectl get pods -n robot-shop -o wide
-```
+The following screenshot shows the Robot Shop workloads and persistent storage in Kubernetes. It also demonstrates the recovery of pods from temporary startup states into healthy running workloads.
 
-Check deployment readiness:
+![Robot Shop Kubernetes deployment and pod health](doc/fullydeployed%281%29.png)
 
-```bash
-kubectl get deployments -n robot-shop
-```
+# 8. Application Access
 
-Check services:
+The Robot Shop frontend is exposed through an AWS LoadBalancer service.
 
-```bash
-kubectl get svc -n robot-shop
-```
-
----
-
-## Accessing the Application
-
-The web frontend is exposed through an AWS LoadBalancer service.
-
-Retrieve the external endpoint:
+Retrieve the service:
 
 ```bash
 kubectl get svc web -n robot-shop
 ```
 
-Get the LoadBalancer hostname:
+Retrieve its external hostname:
 
 ```bash
 kubectl get svc web -n robot-shop \
   -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
 ```
 
-Open the returned endpoint in a browser using the service's exposed port.
+Open the returned LoadBalancer endpoint in a browser using the exposed service port.
 
-The endpoint can change if the Kubernetes service or AWS LoadBalancer is recreated.
+The hostname may change if the Kubernetes service or AWS LoadBalancer is recreated.
 
----
+# 9. Monitoring and Observability
 
-# Monitoring and Observability
+Observability is a central part of this project.
 
-Observability is a central part of this project. The monitoring stack provides insight into application health, performance, logs, and distributed request execution.
+The monitoring stack provides visibility into application activity, infrastructure health, application logs, and distributed request execution.
 
-## 1. Prometheus — Metrics
+## 9.1 Prometheus — Metrics Collection
 
-Prometheus is used to collect and store metrics from the Kubernetes cluster and application components.
+Prometheus collects and stores metrics from Kubernetes and monitored application components.
 
 The project uses `kube-prometheus-stack` to provide the Prometheus monitoring infrastructure.
 
-Prometheus is configured to scrape metrics from monitored targets, including the Nginx Prometheus exporter deployed for the Robot Shop web frontend.
+### Nginx Prometheus Exporter
 
-### Nginx Exporter
-
-The Nginx Prometheus exporter exposes metrics from the web frontend's Nginx status endpoint.
+An Nginx Prometheus exporter is deployed to expose metrics from the Robot Shop web frontend's Nginx status endpoint.
 
 The exporter provides metrics such as:
 
@@ -389,17 +351,17 @@ The exporter provides metrics such as:
 - Active connections.
 - Accepted connections.
 - Handled connections.
-- Nginx exporter health.
+- Exporter health.
 
-Example Prometheus metric:
+Example PromQL query:
 
 ```promql
 rate(nginx_http_requests_total[5m])
 ```
 
-This query calculates the average rate of HTTP requests over the previous five minutes.
+This calculates the average request rate over the previous five minutes.
 
-### Verify Metrics Collection
+### Verify Exporter
 
 ```bash
 kubectl get pods -n robot-shop
@@ -407,27 +369,29 @@ kubectl get svc nginx-exporter -n robot-shop
 kubectl get servicemonitor -n robot-shop
 ```
 
-The exporter metrics endpoint is available on port `9113`.
+The exporter exposes metrics on port `9113`.
 
----
+### Prometheus Metrics Evidence
 
-## 2. Grafana — Visualization
+The following screenshot shows the Prometheus metrics used by the monitoring setup.
 
-Grafana provides dashboards for monitoring application and Kubernetes infrastructure performance.
+![Prometheus metrics evidence](doc/red-metrics-prometheus%281%29.png)
 
-The project includes two dashboards:
+## 9.2 Grafana — Dashboards and Visualization
 
-### Robot Shop - RED Metrics
+Grafana provides dashboards for monitoring application and infrastructure performance.
 
-The custom RED dashboard focuses on the application's request-oriented monitoring.
+Two dashboards are included in the project.
 
-RED stands for:
+### Robot Shop RED Metrics Dashboard
 
-- **Rate:** How frequently requests are being processed.
-- **Errors:** How many requests are failing.
+The custom RED dashboard follows the RED monitoring methodology:
+
+- **Rate:** How frequently requests are processed.
+- **Errors:** Request failures and error rates.
 - **Duration:** How long requests take to complete.
 
-The dashboard provides a view of request activity, errors, and latency where suitable metrics are available.
+The dashboard provides a visual overview of request activity, errors, and latency using the available metrics.
 
 ### Robot Shop Infrastructure Dashboard
 
@@ -439,25 +403,19 @@ The infrastructure dashboard provides visibility into:
 - CPU utilization.
 - Memory working set.
 
-### Access Grafana
+### RED Dashboard Evidence
 
-Retrieve the Grafana LoadBalancer endpoint:
+![Robot Shop RED metrics dashboard](doc/redmetrics-dashboard%282%29.png)
 
-```bash
-kubectl get svc -n monitoring
-```
+### Infrastructure Dashboard Evidence
 
-Find the Grafana service and open its external hostname in a browser.
+The infrastructure dashboard complements the custom RED dashboard by showing the resource utilization and health of application workloads.
 
-Grafana credentials are managed through the Helm chart's configuration and Kubernetes secrets.
+## 9.3 Fluent Bit and Loki — Centralized Logging
 
----
+Fluent Bit collects container logs from Kubernetes nodes and forwards them to Loki.
 
-## 3. Fluent Bit and Loki — Logging
-
-The project uses Fluent Bit to collect container logs from Kubernetes nodes and forward them to Loki.
-
-### Log Collection Pipeline
+### Logging Pipeline
 
 ```text
 Kubernetes Containers
@@ -472,14 +430,14 @@ Loki
 Grafana Explore
 ```
 
-Fluent Bit runs as a DaemonSet so that container logs can be collected across the cluster nodes.
+Fluent Bit runs as a DaemonSet, allowing it to collect container logs across cluster nodes.
 
-Loki stores the collected logs and makes them available for querying through Grafana.
+Loki stores the collected logs and makes them available for querying through Grafana Explore.
 
 ### Verify Fluent Bit
 
 ```bash
-kubectl get pods -n monitoring | grep fluent
+kubectl get pods -n monitoring
 ```
 
 ### Verify Loki
@@ -491,31 +449,33 @@ kubectl get svc loki -n monitoring
 
 ### Example LogQL Queries
 
-Search for logs from the web service:
+View web service logs:
 
 ```logql
 {service_name="web"}
 ```
 
-Find errors in web service logs:
+Search web service logs for errors:
 
 ```logql
 {service_name="web"} |= "Error"
 ```
 
-Search payment service errors:
+Search payment service logs for errors:
 
 ```logql
 {service_name="payment"} |= "Error"
 ```
 
-These queries can be executed in Grafana Explore with Loki selected as the data source.
+### Loki Log Search Evidence
 
----
+The following screenshot demonstrates querying application logs by service in Grafana Explore.
 
-## 4. OpenTelemetry and Jaeger — Tracing
+![Loki logs filtered by service](doc/loki-searc-by-service.png)
 
-Distributed tracing helps identify how requests travel through different microservices.
+## 9.4 OpenTelemetry and Jaeger — Distributed Tracing
+
+Distributed tracing provides visibility into how requests move through multiple microservices.
 
 The project uses OpenTelemetry to receive and forward trace data to Jaeger.
 
@@ -534,7 +494,7 @@ Jaeger
 Trace Visualization
 ```
 
-### Example Trace
+### Example Checkout Trace
 
 A checkout request can be inspected in Jaeger:
 
@@ -548,46 +508,47 @@ web: POST /api/cart/checkout
     +---- payment
 ```
 
-The trace provides visibility into the request's execution path, individual service spans, and request duration.
+The trace provides visibility into:
 
-This helps identify which service contributes to latency or failures during a request.
+- Request execution paths.
+- Individual service spans.
+- HTTP methods and routes.
+- HTTP response status codes.
+- Service execution duration.
 
-### Verify Tracing Components
+This helps identify which services contribute to request latency or failures.
 
-```bash
-kubectl get pods -n monitoring
-kubectl get svc -n monitoring
-```
+### Jaeger Trace Evidence
 
-Open the Jaeger LoadBalancer endpoint in a browser to explore available traces.
+The screenshot below shows a checkout request and its child service spans across the Robot Shop application.
 
----
+![Jaeger distributed trace for checkout request](doc/jaegerotl-trace%282%29.png)
 
-# Service Level Objectives and Error Budgets
+# 10. Service Level Objectives and Error Budgets
 
-Site Reliability Engineering practices are used to define and manage the availability expectations of the application's critical services.
+Site Reliability Engineering practices are used to define and manage availability expectations for critical application services.
 
 The project establishes availability SLOs for the Web and Payment services.
 
 ## Availability Objectives
 
-| Service | Availability SLO | Error Budget |
+| Service | Availability SLO | Error Rate Budget |
 |---|---:|---:|
 | Web | 99.0% | 1.0% |
 | Payment | 99.5% | 0.5% |
 
 The objectives are defined over a rolling 30-day measurement window.
 
-### Error Budget Calculation
+## Error Budget Calculation
 
 A 30-day period contains 43,200 minutes.
 
-| Service | Allowed Downtime |
-|---|---:|
-| Web | 432 minutes |
-| Payment | 216 minutes |
+| Service | Error Budget | Allowed Downtime |
+|---|---:|---:|
+| Web | 1.0% | 432 minutes |
+| Payment | 0.5% | 216 minutes |
 
-The error budget represents the amount of unavailability that can occur before the service violates its availability objective.
+The error budget represents the amount of unavailability permitted before a service violates its availability objective.
 
 ### Availability Formula
 
@@ -599,42 +560,41 @@ Availability (%) =
 ### Error Budget Policy
 
 **Healthy error budget**
+
 - Continue normal development and deployment activities.
 - Monitor service availability and performance.
 
 **Low error budget**
+
 - Investigate recurring failures.
 - Review deployments and configuration changes.
 - Prioritize reliability improvements.
 
 **Exhausted error budget**
+
 - Pause non-essential feature releases.
-- Prioritize reliability and bug fixes.
+- Prioritize reliability improvements and bug fixes.
 - Investigate the root cause.
-- Resume normal releases after stability has been reviewed.
+- Resume normal releases after service stability has been reviewed.
 
-The detailed policy is documented in:
+The full policy is documented in [`SLO_ERROR_BUDGET_POLICY.md`](SLO_ERROR_BUDGET_POLICY.md).
 
-`SLO_ERROR_BUDGET_POLICY.md`
+> **Measurement note:** The configured availability alerts detect pod readiness and service unavailability. The request-based availability formula describes the intended SLI; it should not be interpreted as proof that request-level availability is currently calculated by those pod-readiness alert rules.
 
-> The configured availability alerts detect service pod readiness and unavailability. The request-based availability formula describes the intended SLI; it should not be interpreted as a claim that request-level availability is currently calculated by those pod-readiness alert rules.
-
----
-
-# Alerting and Slack Integration
+# 11. Alerting and Slack Integration
 
 Prometheus alerting rules monitor the availability of the Web and Payment services.
 
 Alertmanager routes notifications to the Slack `#monitoring` channel.
 
-### Configured SLO Alerts
+## Configured SLO Alerts
 
 | Alert | Service | SLO | Severity |
 |---|---|---:|---|
 | RobotShopWebAvailabilitySLOBreached | Web | 99.0% | Critical |
 | RobotShopPaymentAvailabilitySLOBreached | Payment | 99.5% | Critical |
 
-### Alert Response Workflow
+## Alert Response Workflow
 
 ```text
 Service Failure
@@ -658,17 +618,33 @@ Service Recovery
 Resolved Notification
 ```
 
-When a monitored service becomes unavailable or unready, Prometheus evaluates the alert rule and Alertmanager sends a notification to Slack.
+When a monitored service becomes unavailable or unready, Prometheus evaluates the configured alert rule.
 
-After recovery, the alert can transition to resolved.
+Alertmanager then sends a notification to Slack.
 
----
+After recovery, the alert transitions to resolved.
 
-# Incident Management and Recovery
+## Web Service Alert Evidence
 
-A key part of this project is demonstrating how to respond to application failures rather than simply monitoring healthy services.
+The following screenshot demonstrates the Web service availability alert being delivered to Slack.
 
-Controlled failure injection was performed against the Web and Payment services.
+![Web service SLO alert in Slack](doc/service-breach-alert-to-slack%281%29.png)
+
+## Payment Service Alert Evidence
+
+The following screenshot shows the Payment service SLO alert firing in Slack.
+
+![Payment service alert firing](doc/payment-alert-firing.png)
+
+After the service was restored, Alertmanager delivered a resolved notification.
+
+![Payment service alert resolved](doc/payment-alert-resolved.png)
+
+# 12. Incident Management and Recovery
+
+A major objective of this project is demonstrating how to respond to application failures rather than simply monitoring healthy services.
+
+Two controlled failure-injection exercises were performed against the Web and Payment services.
 
 ## Incident 1 — Web Service Failure
 
@@ -684,11 +660,11 @@ kubectl set image deployment/web \
 
 ### Observed Impact
 
-The Kubernetes deployment attempted to pull an invalid image.
+Kubernetes attempted to pull an invalid image.
 
-The affected pod entered an image-pull failure state, preventing the Web service from becoming ready.
+The affected pod entered `ErrImagePull` and `ImagePullBackOff` states, preventing the new deployment from becoming ready.
 
-The availability alert was triggered and a critical notification was delivered to Slack.
+The Web availability alert fired and a critical notification was delivered to Slack.
 
 ### Recovery
 
@@ -707,7 +683,13 @@ kubectl rollout status deployment/web -n robot-shop
 kubectl get pods -n robot-shop
 ```
 
-The Web deployment returned to a healthy state, and the alert was resolved.
+The deployment successfully rolled out, the Web pod returned to a healthy state, and the alert was resolved.
+
+### Web Incident Evidence
+
+The screenshot below captures the invalid image deployment, the resulting image-pull failure, and the recovery to the working image.
+
+![Web incident failure injection and recovery](doc/incidentdrill-web%282%29.png)
 
 ## Incident 2 — Payment Service Failure
 
@@ -746,7 +728,7 @@ kubectl rollout status deployment/payment -n robot-shop
 kubectl get pods -n robot-shop
 ```
 
-The Payment deployment returned to a healthy state and Alertmanager delivered a resolved notification.
+The Payment deployment returned to a healthy state, and Alertmanager delivered a resolved notification.
 
 ## Incident Response Summary
 
@@ -764,128 +746,88 @@ Both incidents demonstrated:
 - Verification of application health.
 - Alert resolution after recovery.
 
-### Post-Incident Documentation
+# 13. Operational Documentation
 
-A postmortem was prepared for the Web service incident.
+The project includes operational documents to support troubleshooting, reliability management, and incident response.
 
-It documents:
-
-- Incident summary.
-- Customer impact.
-- Incident timeline.
-- Root cause analysis.
-- Recovery actions.
-- Corrective and preventive measures.
-
-The postmortem is available in:
-
-`postmortem.md`
-
----
-
-# Runbook and Documentation
-
-Operational documentation is maintained alongside the project.
-
-| Document | Description |
+| Document | Purpose |
 |---|---|
-| `RUNBOOK.md` | Operational procedures for Web and Payment service alerts |
-| `SLO_ERROR_BUDGET_POLICY.md` | Availability objectives and error budget policy |
-| `postmortem.md` | Incident analysis and lessons learned |
+| [`RUNBOOK.md`](RUNBOOK.md) | Operational procedures for Web and Payment service alerts |
+| [`SLO_ERROR_BUDGET_POLICY.md`](SLO_ERROR_BUDGET_POLICY.md) | Availability objectives and error budget policy |
+| [`postmortem.md`](postmortem.md) | Incident analysis, root cause and corrective actions |
 
-The runbook provides practical commands for diagnosing service availability problems, investigating failures, and restoring affected workloads.
+The runbook contains practical commands for diagnosing service availability issues, investigating failures, and restoring affected workloads.
 
----
+The postmortem records the Web incident, its impact, timeline, root cause, and preventive actions.
 
-# Load Generation
+# 14. Original Robot Shop Features
 
-A separate load-generation utility is provided in the original Robot Shop project.
+The original Stan's Robot Shop project supports additional deployment and instrumentation approaches.
 
-The load generator is built using Python and Locust.
+## Build from Source
 
-It can be used to generate traffic against the application and observe how the services behave under load.
+To build the Docker images from source, configure the required environment variable:
 
-### Run with Docker Compose
+```bash
+export INSTANA_AGENT_KEY="<your-agent-key>"
+```
 
-To start the application locally:
+Build the images:
+
+```bash
+docker-compose build
+```
+
+Push images if using an alternative registry:
+
+```bash
+docker-compose push
+```
+
+## Run Locally
+
+Pull the application images:
 
 ```bash
 docker-compose pull
+```
+
+Start the application:
+
+```bash
 docker-compose up
 ```
 
-To start the application together with the load generator:
+Start the application with load generation:
 
 ```bash
 docker-compose -f docker-compose.yaml \
   -f docker-compose-load.yaml up
 ```
 
-### Load Generator on Kubernetes
-
-The load generator can also be deployed within Kubernetes.
-
-Inspect its workload:
-
-```bash
-kubectl get pods -n robot-shop
-```
-
-For additional instructions, see the original [Load Generator README](load-gen/README.md).
-
----
-
-# Original Application Documentation
-
-The original Stan's Robot Shop project supports additional deployment and instrumentation approaches.
-
-### Build from Source
-
-To build the Docker images from source, configure the required environment variables and run:
-
-```bash
-export INSTANA_AGENT_KEY="<your-agent-key>"
-docker-compose build
-```
-
-If you have changed the image registry or tag in the `.env` file, you can push the images using:
-
-```bash
-docker-compose push
-```
-
-### Run Locally
-
-The application can be run locally using Docker Compose:
-
-```bash
-docker-compose pull
-docker-compose up
-```
-
 The local frontend is available at:
 
 `http://localhost:8080`
 
-### Kubernetes
+## Original Kubernetes Deployment
 
 The original application includes Kubernetes deployment manifests and Helm chart documentation.
 
 See the original [Kubernetes Helm README](K8s/helm/README.md).
 
-### DC/OS / Marathon
+## DC/OS / Marathon
 
-The original DC/OS manifests are located in the `DCOS/` directory.
+The original DC/OS manifests are available in the `DCOS/` directory.
 
-### Website and End-User Monitoring
+## Website and End-User Monitoring
 
 The original project supports Instana Website Monitoring and End-User Monitoring.
 
 See the [Instana Website Monitoring documentation](https://docs.instana.io/website_monitoring/).
 
-### Original Prometheus Metrics
+## Original Prometheus Metrics
 
-The original Robot Shop application also provides Prometheus metric endpoints for the Cart and Payment services.
+The original Robot Shop application provides metric endpoints for the Cart and Payment services.
 
 Example endpoints:
 
@@ -897,48 +839,53 @@ curl http://<host>:8080/api/payment/metrics
 The Cart service provides a counter for the number of items added to the cart.
 
 The Payment service provides:
+
 - A counter of purchased items.
 - A histogram of the number of items in each cart.
 - A histogram of the total value of each cart.
 
----
+For more information about the original application, visit the [Stan's Robot Shop GitHub repository](https://github.com/instana/robot-shop).
 
-# Lessons Learned
+# 15. Lessons Learned
 
 This project provided practical experience with several important DevOps and SRE concepts.
 
 ### Kubernetes and Helm
+
 - Deploying and managing microservices on AWS EKS.
 - Managing application resources through Helm.
-- Inspecting pod, deployment, and service health.
+- Inspecting pod, deployment, service and persistent volume health.
 - Recovering failed deployments.
 
-### Monitoring
+### Monitoring and Visualization
+
 - Deploying Prometheus and Grafana.
-- Configuring metrics exporters and ServiceMonitors.
+- Configuring exporters and ServiceMonitors.
 - Building dashboards for application and infrastructure visibility.
 
-### Logging
+### Centralized Logging
+
 - Running Fluent Bit as a DaemonSet.
 - Forwarding Kubernetes container logs to Loki.
 - Querying application logs through Grafana.
 
 ### Distributed Tracing
+
 - Understanding trace and span relationships.
 - Using OpenTelemetry Collector to forward trace data.
 - Investigating service execution paths with Jaeger.
 
 ### Site Reliability Engineering
+
 - Defining availability objectives.
 - Calculating error budgets.
 - Configuring availability alerts.
 - Delivering alerts through Slack.
 - Performing controlled failure injection.
-- Recovering failed services and documenting incidents.
+- Recovering failed services.
+- Documenting incidents and corrective actions.
 
----
-
-# Future Improvements
+# 16. Future Improvements
 
 Potential improvements for a future iteration include:
 
@@ -952,17 +899,15 @@ Potential improvements for a future iteration include:
 - Strengthen application security and secret management.
 - Expand SLO monitoring with multi-window, multi-burn-rate alerting.
 
----
+# 17. Disclaimer
 
-# Disclaimer
+Stan's Robot Shop is a sample microservices application intended for learning and experimentation.
 
-Stan's Robot Shop is a sample microservices application intended for learning and experimentation. The original application does not provide comprehensive security controls or production-grade error handling.
+The original application does not provide comprehensive security controls or production-grade error handling.
 
-This project demonstrates deployment, observability, reliability engineering, and incident response practices in a learning environment. Additional hardening and validation would be required before using the environment for production workloads.
+This project demonstrates deployment, observability, reliability engineering, and incident response practices in a learning environment. Additional security hardening, reliability validation, and operational testing would be required before using the environment for production workloads.
 
----
-
-## Acknowledgements
+# 18. Acknowledgements
 
 - Original application: [Stan's Robot Shop](https://github.com/instana/robot-shop)
 - Original application documentation: [Instana Blog](https://www.instana.com/blog/stans-robot-shop-sample-microservice-application/)
