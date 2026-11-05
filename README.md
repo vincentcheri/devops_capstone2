@@ -855,9 +855,6 @@ This project provided practical experience with several important DevOps and SRE
 Potential improvements for a future iteration include:
 
 - Implement request-level availability SLIs using application metrics.
-- Add HTTP error-rate and latency histogram instrumentation.
-- Introduce automated deployment pipelines using CI/CD.
-- Use immutable container image tags instead of relying on `latest`.
 - Implement automated rollback strategies.
 - Introduce Kubernetes admission policies to prevent invalid image deployments.
 - Add resource requests, limits, and autoscaling policies.
