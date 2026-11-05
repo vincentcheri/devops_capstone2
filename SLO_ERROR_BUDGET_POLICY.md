@@ -1,44 +1,130 @@
+# SLO ERROR BUDGET POLICY
 
-Robot Shop Service Level Objective (SLO) & Error Budget Policy
+## 1. Purpose
 
-Document Status: ACTIVE
-Target System: Stan's Robot Shop Microservices Application
-Owner: DevOps Site Reliability Engineering (SRE) Team
+This policy defines the availability Service Level Objectives (SLOs) for the Stan's Robot Shop application deployed on AWS EKS. It establishes how service availability is measured, how much downtime is acceptable, and what actions should be taken when the error budget is consumed.
 
-1. Service Level Indicator (SLI) & Objective (SLO) Definition
+## 2. Service Level Objectives (SLOs)
 
-To guarantee an acceptable user experience across the web storefront, the platform establishes a core Availability target based on inbound web ingress traffic.
-• Service Level Indicator (SLI): The proportion of valid HTTP requests to the Robot Shop web gateway service that return a success status code (any HTTP status code less than 500).
-\(\text{SLI}=\frac{\sum \text{Requests\ (Status\ Code\ }<500\text{)}}{\sum \text{Total\ Valid\ Inbound\ Requests}}\)
-• Service Level Objective (SLO): 99.0% availability over a rolling 30-day window.
-• Total Allowed Error Budget: 1.0% of total requests over the rolling window can fail before breaching the agreement.
+The availability objectives are measured over a rolling 30-day window.
 
-2. Alerting Thresholds & Slack Notification Routing
+| Service | Availability SLO | Allowed Error Rate |
+|---|---:|---:|
+| Web | 99.0% | 1.0% |
+| Payment | 99.5% | 0.5% |
 
-When abnormal failure spikes burn through the monthly allocation prematurely, multi-window multi-burn-rate alerts handle routing via Prometheus Alertmanager to the #monitoring Slack workspace:
-• Critical Burn Warning: Alert triggers if >2% of the total error budget is burned within any 1-hour window (indicating a catastrophic outage).
-• Slack Escalation: Triggers the critical webhook payload containing the specific alert payload link to the production web console.
+### Service Level Indicators (SLIs)
 
-3. Error Budget Depletion Policy (The Escalation Rules)
+Availability is measured using the proportion of successful requests compared with total valid requests.
 
-If an ongoing incident or frequent minor instability consumes the error budget, the following strict engineering rules apply based on the percentage consumed:
+**Availability formula:**
 
-🟢 State 1: <50% Budget Consumed (Normal Operations)
+Availability (%) = (Successful Requests / Total Valid Requests) × 100
 
-• Engineering Focus: Feature velocity remains the primary focus.
-• Action Plan: Code shipments to production continue as scheduled. Normal bug-triage workflows apply.
+- Successful requests are requests completed successfully.
+- Failed requests are requests that result in service errors or unsuccessful responses.
+- Total valid requests include both successful and failed requests.
 
-🟡 State 2: 50% - 89% Budget Consumed (Warning Threshold)
+## 3. Error Budget Calculation
 
-• Engineering Focus: Reliability review.
-• Action Plan: The SRE team schedules a joint review meeting with the Development team. Automated end-to-end integration tests are evaluated to identify flaky microservices (e.g., payment or cart).
+An error budget is the amount of unavailability permitted within the SLO measurement window.
 
-🔴 State 3: ≥90% Budget Consumed (Near Breach)
+A 30-day period contains 43,200 minutes.
 
-• Engineering Focus: Code Freeze & Recovery Sprint.
-• Action Plan: Feature development freezes immediately. All active pipelines are restricted except for emergency reliability hotfixes, performance tune-ups, or security updates.
+| Service | Error Budget | Allowed Downtime |
+|---|---:|---:|
+| Web | 1.0% | 432 minutes |
+| Payment | 0.5% | 216 minutes |
 
-❌ State 4: Budget Fully Exhausted (100% Breached)
+**Calculation:**
 
-• Engineering Focus: Mandatory Postmortem & Remediation.
-• Action Plan: A cross-functional engineering freeze remains in place. A formal Blameless Postmortem must be logged within 48 hours of resolution. Reliability items identified during the root cause analysis are added to the immediate sprint backlog and must be resolved before regular feature deployments can resume.
+- Web: 43,200 × 0.01 = 432 minutes.
+- Payment: 43,200 × 0.005 = 216 minutes.
+
+When a service consumes its entire error budget, it has failed to meet its availability objective for that measurement period.
+
+## 4. Error Budget Burn Rate
+
+Burn rate measures how quickly a service consumes its available error budget.
+
+| Burn Rate | Severity | Required Response |
+|---|---|---|
+| 1x | Normal | Continue normal operations and monitoring. |
+| 6x | High | Investigate the cause and review recent deployments. |
+| 14.4x | Critical | Prioritize immediate mitigation and consider stopping risky releases. |
+
+A higher burn rate means the service is consuming its error budget faster than the allowed rate.
+
+## 5. Alerting and Monitoring
+
+Prometheus monitors the Robot Shop services and evaluates availability-related alert rules.
+
+The following alerts are configured:
+
+| Alert | Service | SLO |
+|---|---|---:|
+| RobotShopWebAvailabilitySLOBreached | Web | 99.0% |
+| RobotShopPaymentAvailabilitySLOBreached | Payment | 99.5% |
+
+The alerts detect when the corresponding service becomes unavailable or its pods become unready.
+
+Alert notifications are delivered to the Slack `#monitoring` channel through Alertmanager.
+
+The monitoring stack includes:
+
+- **Prometheus:** Collects metrics and evaluates alert rules.
+- **Grafana:** Displays service and infrastructure dashboards.
+- **Loki and Fluent Bit:** Collect and provide searchable application logs.
+- **Jaeger and OpenTelemetry:** Provide distributed tracing for request investigation.
+
+## 6. Error Budget Policy
+
+The following actions apply depending on the remaining error budget.
+
+**Healthy error budget**
+- Continue normal development and deployment activities.
+- Monitor service availability and performance.
+- Review dashboards and alerts regularly.
+
+**Low error budget**
+- Investigate recurring failures and service degradation.
+- Review recent deployments and configuration changes.
+- Prioritize reliability improvements.
+- Avoid unnecessary risky changes.
+
+**Exhausted error budget**
+- Pause non-essential feature releases.
+- Prioritize bug fixes and reliability improvements.
+- Investigate the root cause of service failures.
+- Resume normal releases after service stability improves and the team reviews the incident.
+
+## 7. Incident Response
+
+When an availability alert fires:
+
+1. Acknowledge the alert in Slack.
+2. Identify the affected service.
+3. Check pod and deployment health using `kubectl`.
+4. Review Grafana metrics and Loki logs.
+5. Use Jaeger traces when request-level investigation is needed.
+6. Mitigate the issue and restore service availability.
+7. Verify that the deployment is healthy.
+8. Document the root cause and corrective actions.
+
+## 8. Review and Continuous Improvement
+
+The SLOs and error budget should be reviewed regularly to ensure that they reflect the application's reliability requirements.
+
+After an incident, the team should:
+
+- Review the impact on service availability.
+- Determine how much error budget was consumed.
+- Identify the root cause.
+- Document corrective and preventive actions.
+- Update monitoring and alert rules where necessary.
+
+## 9. Conclusion
+
+This policy provides a framework for managing the availability of the Stan's Robot Shop application. By defining measurable availability objectives, calculating error budgets, monitoring service health, and establishing release policies, the team can balance feature development with system reliability.
+
+The Web service has a 99.0% availability objective, while the Payment service has a stricter 99.5% availability objective. Prometheus, Grafana, Alertmanager, Loki, Fluent Bit, and Jaeger support monitoring, alerting, and incident investigation.
